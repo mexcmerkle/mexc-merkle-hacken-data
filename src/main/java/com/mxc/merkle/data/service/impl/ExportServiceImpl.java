@@ -41,17 +41,11 @@ public class ExportServiceImpl implements ExportService {
     @Value("${export.output-dir:./exports}")
     private String outputDir;
     
-    @Value("${export.file-prefix:merkle_data}")
+    @Value("${export.file-prefix:mexc_merkle_data}")
     private String filePrefix;
     
     private static final String[] CURRENCY_PREFIXES = {"USDT:", "USDC:", "BTC:", "ETH:"};
-    
-    @Override
-    public void exportMerkleData() throws Exception {
-        log.info("Starting to export all Merkle data...");
-        exportMerkleDataInternal(null);
-    }
-    
+
     @Override
     public void exportMerkleDataBySnapshotDate(LocalDateTime snapshotDate) throws Exception {
         log.info("Starting to export Merkle data for snapshot date: {}", snapshotDate);
@@ -71,25 +65,15 @@ public class ExportServiceImpl implements ExportService {
         }
         
         // Generate file name
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String fileName = filePrefix + "_" + timestamp;
-        if (snapshotDate != null) {
-            String snapshotStr = snapshotDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            fileName += "_" + snapshotStr;
-        }
-        fileName += ".csv";
+        String snapshotStr = snapshotDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String fileName = filePrefix + "_" +snapshotStr + ".csv";
         String filePath = outputDir + File.separator + fileName;
         
         // Query total record count
         Long totalCount;
-        if (snapshotDate != null) {
-            totalCount = merkleDataMapper.countBySnapshotDate(snapshotDate);
-            log.info("Total records for snapshot date {}: {}", snapshotDate, totalCount);
-        } else {
-            totalCount = merkleDataMapper.countAll();
-            log.info("Total records: {}", totalCount);
-        }
-        
+        totalCount = merkleDataMapper.countBySnapshotDate(snapshotDate);
+        log.info("Total records for snapshot date {}: {}", snapshotDate, totalCount);
+
         if (totalCount == 0) {
             log.warn("No data to export");
             return;

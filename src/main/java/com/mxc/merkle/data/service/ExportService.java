@@ -8,12 +8,6 @@ import java.time.LocalDateTime;
 public interface ExportService {
     
     /**
-     * Export Merkle data to CSV file
-     * @throws Exception Export exception
-     */
-    void exportMerkleData() throws Exception;
-    
-    /**
      * Export Merkle data for specified snapshot date to CSV file
      * @param snapshotDate Snapshot date
      * @throws Exception Export exception
