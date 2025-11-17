@@ -17,7 +17,6 @@ This is a command-line tool for exporting MEXC Merkle Tree leaf node data to CSV
 ## Features
 
 - ✅ Batch processing to prevent Out of Memory (OOM) issues
-- ✅ Parse JSON format balance_data field using Jackson
 - ✅ Aggregate amounts by cryptocurrency prefixes (USDT, USDC, BTC, ETH)
 - ✅ Stream writing CSV files using EasyExcel
 - ✅ Automatically calculate MD5 hash of exported files
@@ -120,22 +119,10 @@ The exported CSV file contains the following 5 columns:
 | Column Name | Description | Data Source |
 |-------------|-------------|-------------|
 | memberId | User ID | Directly from member_id field |
-| USDT | Total USDT amount | Aggregated from all USDT:* values in balance_data |
-| USDC | Total USDC amount | Aggregated from all USDC:* values in balance_data |
-| BTC | Total BTC amount | Aggregated from all BTC:* values in balance_data |
-| ETH | Total ETH amount | Aggregated from all ETH:* values in balance_data |
-
-### balance_data Parsing Example
-
-```json
-{
-  "USDT:ERC20": "100.50",
-  "USDT:TRC20": "200.25", 
-  "USDC:ERC20": "300.75",
-  "BTC:NATIVE": "0.001",
-  "ETH:NATIVE": "0.5"
-}
-```
+| USDT | Total USDT amount | Aggregated from all USDT:* values |
+| USDC | Total USDC amount | Aggregated from all USDC:* values |
+| BTC | Total BTC amount | Aggregated from all BTC:* values |
+| ETH | Total ETH amount | Aggregated from all ETH:* values |
 
 Aggregated results after parsing:
 - USDT: 300.75 (100.50 + 200.25)
