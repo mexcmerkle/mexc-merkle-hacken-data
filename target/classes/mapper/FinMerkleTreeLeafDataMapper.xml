@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mxc.merkle.data.mapper.FinMerkleTreeLeafDataMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.mxc.merkle.data.entity.FinMerkleTreeLeafData">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="hash_id" property="hashId" jdbcType="VARCHAR"/>
+        <result column="record_id" property="recordId" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="digital_id" property="digitalId" jdbcType="VARCHAR"/>
+        <result column="merkle_path" property="merklePath" jdbcType="VARCHAR"/>
+        <result column="balance_data" property="balanceData" jdbcType="VARCHAR"/>
+        <result column="snapshot_date" property="snapshotDate" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="extends_info" property="extendsInfo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 基础字段列表 -->
+    <sql id="Base_Column_List">
+        id, hash_id, record_id, member_id, digital_id, merkle_path, 
+        balance_data, snapshot_date, create_time, update_time, extends_info
+    </sql>
+
+    <!-- 查询总记录数 -->
+    <select id="countAll" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM fin_merkle_tree_leaf_data
+    </select>
+
+    <!-- 根据快照日期查询总记录数 -->
+    <select id="countBySnapshotDate" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM fin_merkle_tree_leaf_data
+        WHERE snapshot_date = #{snapshotDate}
+    </select>
+
+    <!-- 分页查询数据 -->
+    <select id="selectByPage" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM fin_merkle_tree_leaf_data
+        ORDER BY id ASC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 根据快照日期分页查询数据 -->
+    <select id="selectBySnapshotDateAndPage" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM fin_merkle_tree_leaf_data
+        WHERE snapshot_date = #{snapshotDate}
+        ORDER BY id ASC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 根据快照日期查询最小ID -->
+    <select id="findMinIdBySnapshotDate" resultType="java.lang.Long">
+        SELECT MIN(id) FROM fin_merkle_tree_leaf_data
+        WHERE snapshot_date = #{snapshotDate}
+    </select>
+
+    <!-- 根据快照日期查询最大ID -->
+    <select id="findMaxIdBySnapshotDate" resultType="java.lang.Long">
+        SELECT MAX(id) FROM fin_merkle_tree_leaf_data
+        WHERE snapshot_date = #{snapshotDate}
+    </select>
+
+    <!-- 根据快照日期和ID范围查询数据 -->
+    <select id="selectBySnapshotDateAndIdRange" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM fin_merkle_tree_leaf_data
+        WHERE snapshot_date = #{snapshotDate}
+        AND id &gt;= #{minId}
+        AND id &lt;= #{maxId}
+        LIMIT #{limit}
+    </select>
+
+</mapper>

@@ -1,0 +1,42 @@
+# 数据库配置示例文件
+# 使用前请将此文件重命名为 application.yml 并修改数据库连接信息
+
+spring:
+  application:
+    name: mxc-merkle-hacken-data
+  
+  datasource:
+    # 请修改为您的数据库连接信息
+    url: jdbc:mysql://atomuin-v3.cluster-cewwfzldjqmr.ap-northeast-1.rds.amazonaws.com:3306/risk?useUnicode=true&characterEncoding=utf8&autoReconnect=true&userSSL=false
+    username: test_fk_user
+    password: rf!xp*kYYNiHXDXl678
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.mxc.merkle.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    com.mxc.merkle: INFO
+    com.mxc.merkle.mapper: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 导出配置
+export:
+  # 批处理大小 - 建议根据服务器内存调整
+  batch-size: 1000
+  # 导出文件目录 - 确保有写入权限
+  output-dir: ./exports
+  # CSV文件名前缀
+  file-prefix: merkle_data
