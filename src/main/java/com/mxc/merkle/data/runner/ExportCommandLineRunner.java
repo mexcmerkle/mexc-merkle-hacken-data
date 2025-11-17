@@ -42,7 +42,7 @@ public class ExportCommandLineRunner implements CommandLineRunner {
                 exportService.exportMerkleDataBySnapshotDate(snapshotDate);
                 log.info("Data export task completed successfully!");
             } else {
-                log.info("Data export task completed failed! snapshotDate is null");
+                log.error("Data export task completed failed! snapshotDate is null");
             }
         } catch (Exception e) {
             log.error("Data export task failed: {}", e.getMessage(), e);

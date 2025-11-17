@@ -75,7 +75,7 @@ public class ExportServiceImpl implements ExportService {
         log.info("Total records for snapshot date {}: {}", snapshotDate, totalCount);
 
         if (totalCount == 0) {
-            log.warn("No data to export");
+            log.error("No data to export");
             return;
         }
         
@@ -85,14 +85,9 @@ public class ExportServiceImpl implements ExportService {
         // Create EasyExcel writer
         try (com.alibaba.excel.ExcelWriter excelWriter = EasyExcel.write(filePath, ExportData.class).build()) {
             com.alibaba.excel.write.metadata.WriteSheet writeSheet = EasyExcel.writerSheet("MerkleData").build();
-            
-            if (snapshotDate != null) {
-                // Use ID range-based query to optimize performance
-                processedCount = exportByIdRange(snapshotDate, excelWriter, writeSheet, totalCount);
-            } else {
-                // Full export uses traditional pagination
-                processedCount = exportByOffset(excelWriter, writeSheet, totalCount);
-            }
+
+            processedCount = exportByIdRange(snapshotDate, excelWriter, writeSheet, totalCount);
+
         }
         
         // Calculate file MD5
@@ -171,51 +166,6 @@ public class ExportServiceImpl implements ExportService {
                         processedCount, totalCount,
                         dataList.get(0).getId(), lastId);
             }
-        }
-        
-        return processedCount;
-    }
-    
-    /**
-     * Offset-based export (full export)
-     * @param excelWriter Excel writer
-     * @param writeSheet Write sheet
-     * @param totalCount Total record count
-     * @return Processed record count
-     */
-    private long exportByOffset(com.alibaba.excel.ExcelWriter excelWriter,
-                               com.alibaba.excel.write.metadata.WriteSheet writeSheet,
-                               Long totalCount) {
-        
-        long processedCount = 0;
-        long offset = 0;
-        
-        while (offset < totalCount) {
-            // Query data with pagination
-            List<FinMerkleTreeLeafData> dataList = merkleDataMapper.selectByPage(offset, batchSize);
-            
-            if (dataList.isEmpty()) {
-                break;
-            }
-            
-            // Convert data
-            List<ExportData> exportDataList = new ArrayList<>();
-            for (FinMerkleTreeLeafData data : dataList) {
-                ExportData exportData = convertToExportData(data);
-                if (exportData != null) {
-                    exportDataList.add(exportData);
-                }
-            }
-            
-            // Write data
-            if (!exportDataList.isEmpty()) {
-                excelWriter.write(exportDataList, writeSheet);
-            }
-            
-            processedCount += dataList.size();
-            offset += batchSize;
-            
-            log.info("Processed {} / {} records", processedCount, totalCount);
         }
         
         return processedCount;

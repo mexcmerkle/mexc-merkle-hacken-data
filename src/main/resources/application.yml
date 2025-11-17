@@ -40,4 +40,4 @@ export:
   # Export file directory
   output-dir: ./exports
   # CSV file name prefix
-  file-prefix: merkle_data
+  file-prefix: mexc_merkle_data
