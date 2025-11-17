@@ -81,29 +81,6 @@ export:
   file-prefix: merkle_data  # CSV文件名前缀
 ```
 
-## 数据库表结构
-
-项目需要访问以下数据库表：
-
-```sql
-CREATE TABLE `fin_merkle_tree_leaf_data` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `hash_id` varchar(64) NOT NULL COMMENT '记录hashId',
-  `record_id` varchar(64) NOT NULL DEFAULT '' COMMENT '记录Id',
-  `member_id` varchar(64) NOT NULL COMMENT '用户id',
-  `digital_id` varchar(16) NOT NULL DEFAULT '' COMMENT '用户Uid',
-  `merkle_path` varchar(2048) NOT NULL DEFAULT '' COMMENT '默克尔路径',
-  `balance_data` varchar(8190) NOT NULL DEFAULT '' COMMENT '资产信息(json)',
-  `snapshot_date` datetime NOT NULL COMMENT '快照日期',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `extends_info` varchar(2046) NOT NULL DEFAULT '' COMMENT '扩展信息',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uidx_snapshot_date_member_id` (`snapshot_date`,`member_id`) USING BTREE,
-  KEY `idx_hash_id` (`hash_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='merkle tree叶子节点数据'
-```
-
 ## 使用方法
 
 ### 1. 编译项目
@@ -125,7 +102,7 @@ java -jar target/mxc-merkle-hacken-data-1.0.0.jar
 java -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
 
 # 指定完整的日期时间
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date "2024-11-16 10:30:00"
+java -jar target/mxc-merkle-hacken-data-1.0.0.jar --spring.config.name=application-export --snapshot-date "2024-11-16 10:30:00"
 ```
 
 ### 3. 查看结果
