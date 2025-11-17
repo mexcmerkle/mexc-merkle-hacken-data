@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# MXC Merkle Data Export Tool 启动脚本
+# MEXC Merkle Data Export Tool 启动脚本
 
-echo "=== MXC Merkle Data Export Tool ==="
+echo "=== MEXC Merkle Data Export Tool ==="
 echo "正在启动数据导出工具..."
 
 # 检查jar文件是否存在
-JAR_FILE="target/mxc-merkle-hacken-data-1.0.0.jar"
+JAR_FILE="target/mexc-merkle-hacken-data-1.0.0.jar"
 if [ ! -f "$JAR_FILE" ]; then
     echo "错误: 找不到jar文件 $JAR_FILE"
     echo "请先运行: mvn clean package"

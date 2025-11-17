@@ -1,4 +1,4 @@
-package com.mxc.merkle.data.entity;
+package com.mexc.merkle.data.entity;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Builder;

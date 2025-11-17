@@ -36,28 +36,28 @@ mvn clean package
 
 #### 导出所有数据
 ```bash
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar
+java -jar target/mexc-merkle-hacken-data-1.0.0.jar
 ```
 
 #### 导出指定快照日期的数据
 ```bash
 # 指定日期（时间默认为00:00:00）
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
+java -jar target/mexc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
 
 # 指定完整的日期时间
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date "2024-11-16 10:30:00"
+java -jar target/mexc-merkle-hacken-data-1.0.0.jar --snapshot-date "2024-11-16 10:30:00"
 ```
 
 ### 方式三：带JVM参数运行
 
 #### 导出所有数据
 ```bash
-java -Xms512m -Xmx2g -XX:+UseG1GC -jar target/mxc-merkle-hacken-data-1.0.0.jar
+java -Xms512m -Xmx2g -XX:+UseG1GC -jar target/mexc-merkle-hacken-data-1.0.0.jar
 ```
 
 #### 导出指定快照日期的数据
 ```bash
-java -Xms512m -Xmx2g -XX:+UseG1GC -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
+java -Xms512m -Xmx2g -XX:+UseG1GC -jar target/mexc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
 ```
 
 ## 4. 快照日期参数说明
@@ -69,10 +69,10 @@ java -Xms512m -Xmx2g -XX:+UseG1GC -jar target/mxc-merkle-hacken-data-1.0.0.jar -
 ### 示例
 ```bash
 # 导出2024年11月16日的所有数据
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
+java -jar target/mexc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
 
 # 导出2024年11月16日10:30:00的数据
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date "2024-11-16 10:30:00"
+java -jar target/mexc-merkle-hacken-data-1.0.0.jar --snapshot-date "2024-11-16 10:30:00"
 ```
 
 ### 文件命名规则

@@ -1,4 +1,4 @@
-package com.mxc.merkle.data.util;
+package com.mexc.merkle.data.util;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package com.mxc.merkle.data.entity;
+package com.mexc.merkle.data.entity;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.mxc.merkle.data.service;
+package com.mexc.merkle.data.service;
 
 import java.time.LocalDateTime;
 

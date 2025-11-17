@@ -1,8 +1,8 @@
-# MXC Merkle Data Export Tool
+# MEXC Merkle Data Export Tool
 
 ## Project Overview
 
-This is a command-line tool for exporting MXC Merkle Tree leaf node data to CSV files. It aggregates data by cryptocurrency and exports in CSV format.
+This is a command-line tool for exporting MEXC Merkle Tree leaf node data to CSV files. It aggregates data by cryptocurrency and exports in CSV format.
 
 ## Technology Stack
 
@@ -29,11 +29,11 @@ This is a command-line tool for exporting MXC Merkle Tree leaf node data to CSV 
 ## Project Structure
 
 ```
-mxc-merkle-hacken-data/
+mexc-merkle-hacken-data/
 ├── src/
 │   └── main/
 │       ├── java/
-│       │   └── com/mxc/merkle/
+│       │   └── com/mexc/merkle/
 │       │       ├── MerkleDataExportApplication.java    # Main application class
 │       │       ├── entity/                             # Entity classes
 │       │       │   ├── FinMerkleTreeLeafData.java     # Database entity
@@ -93,16 +93,16 @@ mvn clean package
 
 #### Export All Data
 ```bash
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar
+java -jar target/mexc-merkle-hacken-data-1.0.0.jar
 ```
 
 #### Export Data for Specific Snapshot Date
 ```bash
 # Specify date (time defaults to 00:00:00)
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
+java -jar target/mexc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
 
 # Specify complete date and time
-java -jar target/mxc-merkle-hacken-data-1.0.0.jar --spring.config.name=application-export --snapshot-date "2024-11-16 10:30:00"
+java -jar target/mexc-merkle-hacken-data-1.0.0.jar --spring.config.name=application-export --snapshot-date "2024-11-16 10:30:00"
 ```
 
 ### 3. View Results
@@ -156,7 +156,7 @@ Aggregated results after parsing:
 ## Log Output Example
 
 ```
-2024-11-16 22:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - === MXC Merkle Data Export Tool ===
+2024-11-16 22:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - === ME Merkle Data Export Tool ===
 2024-11-16 22:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - Starting data export task...
 2024-11-16 22:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Starting Merkle data export...
 2024-11-16 22:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total records: 15272384

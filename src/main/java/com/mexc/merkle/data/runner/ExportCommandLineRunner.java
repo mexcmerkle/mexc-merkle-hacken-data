@@ -1,6 +1,6 @@
-package com.mxc.merkle.data.runner;
+package com.mexc.merkle.data.runner;
 
-import com.mxc.merkle.data.service.ExportService;
+import com.mexc.merkle.data.service.ExportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +26,7 @@ public class ExportCommandLineRunner implements CommandLineRunner {
     
     @Override
     public void run(String... args) throws Exception {
-        log.info("=== MXC Merkle Data Export Tool ===");
+        log.info("=== MEXC Merkle Data Export Tool ===");
         
         // Parse command line arguments
         LocalDateTime snapshotDate = parseSnapshotDate(args);

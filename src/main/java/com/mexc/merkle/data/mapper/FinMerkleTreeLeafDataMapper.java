@@ -1,6 +1,6 @@
-package com.mxc.merkle.data.mapper;
+package com.mexc.merkle.data.mapper;
 
-import com.mxc.merkle.data.entity.FinMerkleTreeLeafData;
+import com.mexc.merkle.data.entity.FinMerkleTreeLeafData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,10 +1,10 @@
-package com.mxc.merkle.data;
+package com.mexc.merkle.data;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * MXC Merkle Data Export Application Main Startup Class
+ * MEXC Merkle Data Export Application Main Startup Class
  */
 @SpringBootApplication
 public class MerkleDataExportApplication {
