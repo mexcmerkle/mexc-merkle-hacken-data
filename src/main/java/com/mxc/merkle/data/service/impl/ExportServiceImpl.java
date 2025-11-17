@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 导出服务实现类
+ * Export service implementation class
  */
 @Slf4j
 @Service
@@ -48,29 +48,29 @@ public class ExportServiceImpl implements ExportService {
     
     @Override
     public void exportMerkleData() throws Exception {
-        log.info("开始导出所有Merkle数据...");
+        log.info("Starting to export all Merkle data...");
         exportMerkleDataInternal(null);
     }
     
     @Override
     public void exportMerkleDataBySnapshotDate(LocalDateTime snapshotDate) throws Exception {
-        log.info("开始导出快照日期 {} 的Merkle数据...", snapshotDate);
+        log.info("Starting to export Merkle data for snapshot date: {}", snapshotDate);
         exportMerkleDataInternal(snapshotDate);
     }
     
     /**
-     * 内部导出方法
-     * @param snapshotDate 快照日期，为null时导出所有数据
-     * @throws Exception 导出异常
+     * Internal export method
+     * @param snapshotDate Snapshot date, export all data when null
+     * @throws Exception Export exception
      */
     private void exportMerkleDataInternal(LocalDateTime snapshotDate) throws Exception {
-        // 创建导出目录
+        // Create export directory
         File exportDir = new File(outputDir);
         if (!exportDir.exists()) {
             exportDir.mkdirs();
         }
         
-        // 生成文件名
+        // Generate file name
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         String fileName = filePrefix + "_" + timestamp;
         if (snapshotDate != null) {
@@ -80,90 +80,90 @@ public class ExportServiceImpl implements ExportService {
         fileName += ".csv";
         String filePath = outputDir + File.separator + fileName;
         
-        // 查询总记录数
+        // Query total record count
         Long totalCount;
         if (snapshotDate != null) {
             totalCount = merkleDataMapper.countBySnapshotDate(snapshotDate);
-            log.info("快照日期 {} 的总记录数: {}", snapshotDate, totalCount);
+            log.info("Total records for snapshot date {}: {}", snapshotDate, totalCount);
         } else {
             totalCount = merkleDataMapper.countAll();
-            log.info("总记录数: {}", totalCount);
+            log.info("Total records: {}", totalCount);
         }
         
         if (totalCount == 0) {
-            log.warn("没有数据需要导出");
+            log.warn("No data to export");
             return;
         }
         
-        // 分批导出
+        // Batch export
         long processedCount = 0;
         
-        // 创建EasyExcel写入器
+        // Create EasyExcel writer
         try (com.alibaba.excel.ExcelWriter excelWriter = EasyExcel.write(filePath, ExportData.class).build()) {
             com.alibaba.excel.write.metadata.WriteSheet writeSheet = EasyExcel.writerSheet("MerkleData").build();
             
             if (snapshotDate != null) {
-                // 使用基于ID范围的查询优化性能
+                // Use ID range-based query to optimize performance
                 processedCount = exportByIdRange(snapshotDate, excelWriter, writeSheet, totalCount);
             } else {
-                // 全量导出使用传统分页
+                // Full export uses traditional pagination
                 processedCount = exportByOffset(excelWriter, writeSheet, totalCount);
             }
         }
         
-        // 计算文件MD5
+        // Calculate file MD5
         File exportFile = new File(filePath);
         String md5 = MD5Util.calculateFileMD5(exportFile);
         
-        log.info("导出完成！");
-        log.info("文件路径: {}", filePath);
-        log.info("总记录数: {}", processedCount);
-        log.info("文件大小: {} bytes", exportFile.length());
-        log.info("文件MD5: {}", md5);
+        log.info("Export completed!");
+        log.info("File path: {}", filePath);
+        log.info("Total records: {}", processedCount);
+        log.info("File size: {} bytes", exportFile.length());
+        log.info("File MD5: {}", md5);
     }
     
     /**
-     * 基于ID范围的导出（优化快照日期查询性能）
-     * @param snapshotDate 快照日期
-     * @param excelWriter Excel写入器
-     * @param writeSheet 写入Sheet
-     * @param totalCount 总记录数
-     * @return 已处理记录数
+     * ID range-based export (optimize snapshot date query performance)
+     * @param snapshotDate Snapshot date
+     * @param excelWriter Excel writer
+     * @param writeSheet Write sheet
+     * @param totalCount Total record count
+     * @return Processed record count
      */
     private long exportByIdRange(LocalDateTime snapshotDate, 
                                 com.alibaba.excel.ExcelWriter excelWriter,
                                 com.alibaba.excel.write.metadata.WriteSheet writeSheet,
                                 Long totalCount) {
         
-        // 查询ID范围
+        // Query ID range
         Long minId = merkleDataMapper.findMinIdBySnapshotDate(snapshotDate);
         Long maxId = merkleDataMapper.findMaxIdBySnapshotDate(snapshotDate);
         
         if (minId == null || maxId == null) {
-            log.warn("无法获取快照日期 {} 的ID范围", snapshotDate);
+            log.warn("Unable to get ID range for snapshot date: {}", snapshotDate);
             return 0;
         }
         
-        log.info("快照日期 {} 的ID范围: {} - {}", snapshotDate, minId, maxId);
+        log.info("ID range for snapshot date {}: {} - {}", snapshotDate, minId, maxId);
         
         long processedCount = 0;
         Long currentMinId = minId;
         
         while (currentMinId <= maxId) {
-            // 计算当前批次的最大ID
+            // Calculate current batch max ID
             Long currentMaxId = Math.min(currentMinId + batchSize - 1, maxId);
             
-            // 基于ID范围查询数据
+            // Query data based on ID range
             List<FinMerkleTreeLeafData> dataList = merkleDataMapper.selectBySnapshotDateAndIdRange(
                     snapshotDate, currentMinId, currentMaxId, batchSize);
             
             if (dataList.isEmpty()) {
-                // 如果当前范围没有数据，跳到下一个批次
+                // If current range has no data, skip to next batch
                 currentMinId = currentMaxId + 1;
                 continue;
             }
             
-            // 转换数据
+            // Convert data
             List<ExportData> exportDataList = new ArrayList<>();
             for (FinMerkleTreeLeafData data : dataList) {
                 ExportData exportData = convertToExportData(data);
@@ -172,18 +172,18 @@ public class ExportServiceImpl implements ExportService {
                 }
             }
             
-            // 写入数据
+            // Write data
             if (!exportDataList.isEmpty()) {
                 excelWriter.write(exportDataList, writeSheet);
             }
             
             processedCount += dataList.size();
             
-            // 更新下一批次的起始ID
+            // Update next batch start ID
             Long lastId = dataList.get(dataList.size() - 1).getId();
             currentMinId = lastId + 1;
             if (processedCount % 100000 == 0) {
-                log.info("已处理 {} / {} 条记录 (ID范围: {} - {})",
+                log.info("Processed {} / {} records (ID range: {} - {})",
                         processedCount, totalCount,
                         dataList.get(0).getId(), lastId);
             }
@@ -193,11 +193,11 @@ public class ExportServiceImpl implements ExportService {
     }
     
     /**
-     * 基于偏移量的导出（全量导出）
-     * @param excelWriter Excel写入器
-     * @param writeSheet 写入Sheet
-     * @param totalCount 总记录数
-     * @return 已处理记录数
+     * Offset-based export (full export)
+     * @param excelWriter Excel writer
+     * @param writeSheet Write sheet
+     * @param totalCount Total record count
+     * @return Processed record count
      */
     private long exportByOffset(com.alibaba.excel.ExcelWriter excelWriter,
                                com.alibaba.excel.write.metadata.WriteSheet writeSheet,
@@ -207,14 +207,14 @@ public class ExportServiceImpl implements ExportService {
         long offset = 0;
         
         while (offset < totalCount) {
-            // 分页查询数据
+            // Query data with pagination
             List<FinMerkleTreeLeafData> dataList = merkleDataMapper.selectByPage(offset, batchSize);
             
             if (dataList.isEmpty()) {
                 break;
             }
             
-            // 转换数据
+            // Convert data
             List<ExportData> exportDataList = new ArrayList<>();
             for (FinMerkleTreeLeafData data : dataList) {
                 ExportData exportData = convertToExportData(data);
@@ -223,7 +223,7 @@ public class ExportServiceImpl implements ExportService {
                 }
             }
             
-            // 写入数据
+            // Write data
             if (!exportDataList.isEmpty()) {
                 excelWriter.write(exportDataList, writeSheet);
             }
@@ -231,23 +231,23 @@ public class ExportServiceImpl implements ExportService {
             processedCount += dataList.size();
             offset += batchSize;
             
-            log.info("已处理 {} / {} 条记录", processedCount, totalCount);
+            log.info("Processed {} / {} records", processedCount, totalCount);
         }
         
         return processedCount;
     }
     
     /**
-     * 转换数据库记录为导出数据
-     * @param data 数据库记录
-     * @return 导出数据
+     * Convert database record to export data
+     * @param data Database record
+     * @return Export data
      */
     private ExportData convertToExportData(FinMerkleTreeLeafData data) {
         try {
-            // 解析balance_data JSON
+            // Parse balance_data JSON
             Map<String, BigDecimal> balanceMap = parseBalanceData(data.getBalanceData());
             
-            // 聚合各币种金额
+            // Aggregate amounts by currency
             BigDecimal usdtTotal = BigDecimal.ZERO;
             BigDecimal usdcTotal = BigDecimal.ZERO;
             BigDecimal btcTotal = BigDecimal.ZERO;
@@ -281,15 +281,15 @@ public class ExportServiceImpl implements ExportService {
                     .build();
                     
         } catch (Exception e) {
-            log.error("转换数据失败, memberId: {}, error: {}", data.getMemberId(), e.getMessage(), e);
+            log.error("Failed to convert data, memberId: {}, error: {}", data.getMemberId(), e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
     
     /**
-     * 解析balance_data JSON字符串
-     * @param balanceDataJson JSON字符串
-     * @return 解析后的Map
+     * Parse balance_data JSON string
+     * @param balanceDataJson JSON string
+     * @return Parsed Map
      */
     private Map<String, BigDecimal> parseBalanceData(String balanceDataJson) {
         if (!StringUtils.hasText(balanceDataJson)) {
@@ -301,7 +301,7 @@ public class ExportServiceImpl implements ExportService {
             Map<String, BigDecimal> result = objectMapper.readValue(balanceDataJson, typeRef);
             return result != null ? result : new HashMap<>();
         } catch (Exception e) {
-            log.error("解析balance_data失败: {}", balanceDataJson, e);
+            log.error("Failed to parse balance_data: {}", balanceDataJson, e);
             return new HashMap<>();
         }
     }

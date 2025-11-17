@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * CSV导出数据传输对象
+ * CSV export data transfer object
  */
 @Getter
 @Setter
@@ -16,31 +16,31 @@ import java.math.BigDecimal;
 public class ExportData {
     
     /**
-     * 用户ID
+     * Member ID
      */
     @ExcelProperty("memberId")
     private String memberId;
     
     /**
-     * USDT总金额
+     * Total USDT amount
      */
     @ExcelProperty("USDT")
     private BigDecimal usdt;
     
     /**
-     * USDC总金额
+     * Total USDC amount
      */
     @ExcelProperty("USDC")
     private BigDecimal usdc;
     
     /**
-     * BTC总金额
+     * Total BTC amount
      */
     @ExcelProperty("BTC")
     private BigDecimal btc;
     
     /**
-     * ETH总金额
+     * Total ETH amount
      */
     @ExcelProperty("ETH")
     private BigDecimal eth;

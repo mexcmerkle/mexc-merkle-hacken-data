@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mxc.merkle.data.mapper.FinMerkleTreeLeafDataMapper">
 
-    <!-- 结果映射 -->
+    <!-- Result mapping -->
     <resultMap id="BaseResultMap" type="com.mxc.merkle.data.entity.FinMerkleTreeLeafData">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="hash_id" property="hashId" jdbcType="VARCHAR"/>
@@ -17,24 +17,24 @@
         <result column="extends_info" property="extendsInfo" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <!-- 基础字段列表 -->
+    <!-- Base column list -->
     <sql id="Base_Column_List">
         id, hash_id, record_id, member_id, digital_id, merkle_path, 
         balance_data, snapshot_date, create_time, update_time, extends_info
     </sql>
 
-    <!-- 查询总记录数 -->
+    <!-- Query total record count -->
     <select id="countAll" resultType="java.lang.Long">
         SELECT COUNT(1) FROM fin_merkle_tree_leaf_data
     </select>
 
-    <!-- 根据快照日期查询总记录数 -->
+    <!-- Query total record count by snapshot date -->
     <select id="countBySnapshotDate" resultType="java.lang.Long">
         SELECT COUNT(1) FROM fin_merkle_tree_leaf_data
         WHERE snapshot_date = #{snapshotDate}
     </select>
 
-    <!-- 分页查询数据 -->
+    <!-- Query data with pagination -->
     <select id="selectByPage" resultMap="BaseResultMap">
         SELECT 
         <include refid="Base_Column_List"/>
@@ -43,7 +43,7 @@
         LIMIT #{offset}, #{limit}
     </select>
 
-    <!-- 根据快照日期分页查询数据 -->
+    <!-- Query data by snapshot date with pagination -->
     <select id="selectBySnapshotDateAndPage" resultMap="BaseResultMap">
         SELECT 
         <include refid="Base_Column_List"/>
@@ -53,19 +53,19 @@
         LIMIT #{offset}, #{limit}
     </select>
 
-    <!-- 根据快照日期查询最小ID -->
+    <!-- Find minimum ID by snapshot date -->
     <select id="findMinIdBySnapshotDate" resultType="java.lang.Long">
         SELECT MIN(id) FROM fin_merkle_tree_leaf_data
         WHERE snapshot_date = #{snapshotDate}
     </select>
 
-    <!-- 根据快照日期查询最大ID -->
+    <!-- Find maximum ID by snapshot date -->
     <select id="findMaxIdBySnapshotDate" resultType="java.lang.Long">
         SELECT MAX(id) FROM fin_merkle_tree_leaf_data
         WHERE snapshot_date = #{snapshotDate}
     </select>
 
-    <!-- 根据快照日期和ID范围查询数据 -->
+    <!-- Query data by snapshot date and ID range -->
     <select id="selectBySnapshotDateAndIdRange" resultMap="BaseResultMap">
         SELECT 
         <include refid="Base_Column_List"/>

@@ -6,64 +6,64 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
- * merkle tree叶子节点数据实体类
+ * Merkle tree leaf node data entity class
  */
 @Getter
 @Setter
 public class FinMerkleTreeLeafData {
     
     /**
-     * 自增id
+     * Auto-increment ID
      */
     private Long id;
     
     /**
-     * 记录hashId
+     * Record hash ID
      */
     private String hashId;
     
     /**
-     * 记录Id
+     * Record ID
      */
     private String recordId;
     
     /**
-     * 用户id
+     * Member ID
      */
     private String memberId;
     
     /**
-     * 用户Uid
+     * Digital ID
      */
     private String digitalId;
     
     /**
-     * 默克尔路径
+     * Merkle path
      */
     private String merklePath;
     
     /**
-     * 资产信息(json)
+     * Balance data (JSON format)
      */
     private String balanceData;
     
     /**
-     * 快照日期
+     * Snapshot date
      */
     private LocalDateTime snapshotDate;
     
     /**
-     * 创建时间
+     * Create time
      */
     private LocalDateTime createTime;
     
     /**
-     * 更新时间
+     * Update time
      */
     private LocalDateTime updateTime;
     
     /**
-     * 扩展信息
+     * Extended information
      */
     private String extendsInfo;
 }

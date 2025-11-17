@@ -3,20 +3,20 @@ package com.mxc.merkle.data.service;
 import java.time.LocalDateTime;
 
 /**
- * 导出服务接口
+ * Export service interface
  */
 public interface ExportService {
     
     /**
-     * 导出Merkle数据到CSV文件
-     * @throws Exception 导出异常
+     * Export Merkle data to CSV file
+     * @throws Exception Export exception
      */
     void exportMerkleData() throws Exception;
     
     /**
-     * 导出指定快照日期的Merkle数据到CSV文件
-     * @param snapshotDate 快照日期
-     * @throws Exception 导出异常
+     * Export Merkle data for specified snapshot date to CSV file
+     * @param snapshotDate Snapshot date
+     * @throws Exception Export exception
      */
     void exportMerkleDataBySnapshotDate(LocalDateTime snapshotDate) throws Exception;
 }

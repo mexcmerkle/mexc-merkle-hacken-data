@@ -3,9 +3,9 @@ spring:
     name: mxc-merkle-hacken-data
   
   datasource:
-    url: jdbc:mysql://atomuin-v3.cluster-cewwfzldjqmr.ap-northeast-1.rds.amazonaws.com:3306/risk?useUnicode=true&characterEncoding=utf8&autoReconnect=true&userSSL=false
-    username: test_fk_user
-    password: rf!xp*kYYNiHXDXl678
+    url: mysql://localhost:3306/your_database_name?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: your_database_username
+    password: your_database_password
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
@@ -19,20 +19,25 @@ mybatis:
   type-aliases-package: com.mxc.merkle.data.entity
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # Remove SQL logging to reduce log output
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging:
   level:
     com.mxc.merkle.data: INFO
-    com.mxc.merkle.data.mapper.FinMerkleTreeLeafDataMapper: INFO
+    com.mxc.merkle.data.mapper.FinMerkleTreeLeafDataMapper: WARN
+    # Reduce SQL logging
+    org.apache.ibatis: WARN
+    com.zaxxer.hikari: WARN
+    org.springframework.jdbc: WARN
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
-# 导出配置
+# Export configuration
 export:
-  # 批处理大小
+  # Batch processing size
   batch-size: 1000
-  # 导出文件目录
+  # Export file directory
   output-dir: ./exports
-  # CSV文件名前缀
+  # CSV file name prefix
   file-prefix: merkle_data

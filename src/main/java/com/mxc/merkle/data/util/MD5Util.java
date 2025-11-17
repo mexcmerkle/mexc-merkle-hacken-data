@@ -7,18 +7,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * MD5工具类
+ * MD5 utility class
  */
 public class MD5Util {
     
     private static final int BUFFER_SIZE = 8192;
     
     /**
-     * 计算文件的MD5值
-     * @param file 文件
-     * @return MD5值
-     * @throws IOException IO异常
-     * @throws NoSuchAlgorithmException 算法异常
+     * Calculate MD5 hash of file
+     * @param file File
+     * @return MD5 hash
+     * @throws IOException IO exception
+     * @throws NoSuchAlgorithmException Algorithm exception
      */
     public static String calculateFileMD5(File file) throws IOException, NoSuchAlgorithmException {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -36,6 +36,12 @@ public class MD5Util {
         return bytesToHex(digest);
     }
 
+    /**
+     * Calculate MD5 hash of string value
+     * @param value String value
+     * @return MD5 hash
+     * @throws NoSuchAlgorithmException Algorithm exception
+     */
     public static String calculateValueMD5(String value) throws NoSuchAlgorithmException {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         md5.update(value.getBytes());
@@ -44,9 +50,9 @@ public class MD5Util {
     }
     
     /**
-     * 字节数组转十六进制字符串
-     * @param bytes 字节数组
-     * @return 十六进制字符串
+     * Convert byte array to hexadecimal string
+     * @param bytes Byte array
+     * @return Hexadecimal string
      */
     private static String bytesToHex(byte[] bytes) {
         StringBuilder result = new StringBuilder();
