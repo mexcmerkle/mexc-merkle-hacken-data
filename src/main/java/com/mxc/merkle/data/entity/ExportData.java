@@ -18,7 +18,7 @@ public class ExportData {
     /**
      * Member ID
      */
-    @ExcelProperty("memberId")
+    @ExcelProperty("uuid")
     private String memberId;
     
     /**
