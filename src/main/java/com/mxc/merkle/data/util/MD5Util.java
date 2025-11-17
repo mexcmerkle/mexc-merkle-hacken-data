@@ -35,6 +35,13 @@ public class MD5Util {
         byte[] digest = md5.digest();
         return bytesToHex(digest);
     }
+
+    public static String calculateValueMD5(String value) throws NoSuchAlgorithmException {
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        md5.update(value.getBytes());
+        byte[] digest = md5.digest();
+        return bytesToHex(digest);
+    }
     
     /**
      * 字节数组转十六进制字符串
@@ -49,7 +56,4 @@ public class MD5Util {
         return result.toString();
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(MD5Util.calculateFileMD5(new File("/Users/possible/Desktop/mxc-risk.sql")));
-    }
 }

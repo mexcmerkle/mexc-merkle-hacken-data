@@ -182,7 +182,7 @@ public class ExportServiceImpl implements ExportService {
             // 更新下一批次的起始ID
             Long lastId = dataList.get(dataList.size() - 1).getId();
             currentMinId = lastId + 1;
-            if(processedCount % 100000 == 0){
+            if (processedCount % 100000 == 0) {
                 log.info("已处理 {} / {} 条记录 (ID范围: {} - {})",
                         processedCount, totalCount,
                         dataList.get(0).getId(), lastId);
@@ -273,7 +273,7 @@ public class ExportServiceImpl implements ExportService {
             }
             
             return ExportData.builder()
-                    .memberId(data.getMemberId())
+                    .memberId(MD5Util.calculateValueMD5(data.getMemberId()))
                     .usdt(usdtTotal)
                     .usdc(usdcTotal)
                     .btc(btcTotal)
@@ -282,7 +282,7 @@ public class ExportServiceImpl implements ExportService {
                     
         } catch (Exception e) {
             log.error("转换数据失败, memberId: {}, error: {}", data.getMemberId(), e.getMessage(), e);
-            return null;
+            throw new RuntimeException(e);
         }
     }
     
