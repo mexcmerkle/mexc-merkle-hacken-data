@@ -125,6 +125,12 @@ public class ExportServiceImpl implements ExportService {
         
         log.info("ID range for snapshot date {}: {} - {}", snapshotDate, minId, maxId);
         
+        // Initialize total amounts for all users
+        BigDecimal totalUsdt = BigDecimal.ZERO;
+        BigDecimal totalUsdc = BigDecimal.ZERO;
+        BigDecimal totalBtc = BigDecimal.ZERO;
+        BigDecimal totalEth = BigDecimal.ZERO;
+        
         long processedCount = 0;
         Long currentMinId = minId;
         
@@ -148,6 +154,20 @@ public class ExportServiceImpl implements ExportService {
                 ExportData exportData = convertToExportData(data);
                 if (exportData != null) {
                     exportDataList.add(exportData);
+                    
+                    // Accumulate total amounts
+                    if (exportData.getUsdt() != null) {
+                        totalUsdt = totalUsdt.add(exportData.getUsdt());
+                    }
+                    if (exportData.getUsdc() != null) {
+                        totalUsdc = totalUsdc.add(exportData.getUsdc());
+                    }
+                    if (exportData.getBtc() != null) {
+                        totalBtc = totalBtc.add(exportData.getBtc());
+                    }
+                    if (exportData.getEth() != null) {
+                        totalEth = totalEth.add(exportData.getEth());
+                    }
                 }
             }
             
@@ -167,6 +187,16 @@ public class ExportServiceImpl implements ExportService {
                         dataList.get(0).getId(), lastId);
             }
         }
+        
+        // Print total amounts for all users
+        log.info("=== TOTAL AMOUNTS FOR ALL USERS ===");
+        log.info("Snapshot Date: {}", snapshotDate);
+        log.info("Total Records Processed: {}", processedCount);
+        log.info("USDT: {}", totalUsdt);
+        log.info("USDC: {}", totalUsdc);
+        log.info("BTC: {}", totalBtc);
+        log.info("ETH: {}", totalEth);
+        log.info("===================================");
         
         return processedCount;
     }
