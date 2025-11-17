@@ -1,10 +1,10 @@
 # MXC Merkle Data Export Tool
 
-## 项目简介
+## Project Overview
 
-这是一个用于导出MXC Merkle Tree叶子节点数据到CSV文件的命令行工具。并按币种聚合后导出为CSV格式。
+This is a command-line tool for exporting MXC Merkle Tree leaf node data to CSV files. It aggregates data by cryptocurrency and exports in CSV format.
 
-## 技术栈
+## Technology Stack
 
 - Java 8
 - Spring Boot 2.7.18
@@ -14,19 +14,19 @@
 - Jackson
 - Maven
 
-## 功能特性
+## Features
 
-- ✅ 分批处理数据，防止内存溢出(OOM)
-- ✅ 使用Jackson解析JSON格式的balance_data字段
-- ✅ 按币种前缀(USDT、USDC、BTC、ETH)聚合金额
-- ✅ 使用EasyExcel流式写入CSV文件
-- ✅ 自动计算导出文件的MD5值
-- ✅ 详细的日志输出和进度显示
-- ✅ 命令行方式执行，支持一键运行
-- ✅ 支持按快照日期过滤导出数据
-- ✅ 灵活的日期格式支持（yyyy-MM-dd 或 yyyy-MM-dd HH:mm:ss）
+- ✅ Batch processing to prevent Out of Memory (OOM) issues
+- ✅ Parse JSON format balance_data field using Jackson
+- ✅ Aggregate amounts by cryptocurrency prefixes (USDT, USDC, BTC, ETH)
+- ✅ Stream writing CSV files using EasyExcel
+- ✅ Automatically calculate MD5 hash of exported files
+- ✅ Detailed logging and progress display
+- ✅ Command-line execution with one-click operation
+- ✅ Support filtering export data by snapshot date
+- ✅ Flexible date format support (yyyy-MM-dd or yyyy-MM-dd HH:mm:ss)
 
-## 项目结构
+## Project Structure
 
 ```
 mxc-merkle-hacken-data/
@@ -34,33 +34,33 @@ mxc-merkle-hacken-data/
 │   └── main/
 │       ├── java/
 │       │   └── com/mxc/merkle/
-│       │       ├── MerkleDataExportApplication.java    # 主启动类
-│       │       ├── entity/                             # 实体类
-│       │       │   ├── FinMerkleTreeLeafData.java     # 数据库实体
-│       │       │   └── ExportData.java                # 导出数据DTO
-│       │       ├── mapper/                             # MyBatis映射
+│       │       ├── MerkleDataExportApplication.java    # Main application class
+│       │       ├── entity/                             # Entity classes
+│       │       │   ├── FinMerkleTreeLeafData.java     # Database entity
+│       │       │   └── ExportData.java                # Export data DTO
+│       │       ├── mapper/                             # MyBatis mappers
 │       │       │   └── FinMerkleTreeLeafDataMapper.java
-│       │       ├── service/                            # 业务服务
+│       │       ├── service/                            # Business services
 │       │       │   ├── ExportService.java
 │       │       │   └── impl/ExportServiceImpl.java
-│       │       ├── runner/                             # 命令行运行器
+│       │       ├── runner/                             # Command line runner
 │       │       │   └── ExportCommandLineRunner.java
-│       │       └── util/                               # 工具类
+│       │       └── util/                               # Utility classes
 │       │           └── MD5Util.java
 │       └── resources/
-│           ├── application.yml                         # 配置文件
+│           ├── application.yml                         # Configuration file
 │           └── mapper/                                 # MyBatis XML
 │               └── FinMerkleTreeLeafDataMapper.xml
-├── exports/                                            # 导出文件目录
-├── pom.xml                                            # Maven配置
-└── README.md                                          # 项目说明
+├── exports/                                            # Export files directory
+├── pom.xml                                            # Maven configuration
+└── README.md                                          # Project documentation
 ```
 
-## 配置说明
+## Configuration
 
-### 数据库配置
+### Database Configuration
 
-修改 `src/main/resources/application.yml` 中的数据库连接信息：
+Modify the database connection information in `src/main/resources/application.yml`:
 
 ```yaml
 spring:
@@ -70,62 +70,62 @@ spring:
     password: your_password
 ```
 
-### 导出配置
+### Export Configuration
 
-可以在 `application.yml` 中调整导出参数：
+You can adjust export parameters in `application.yml`:
 
 ```yaml
 export:
-  batch-size: 1000          # 批处理大小
-  output-dir: ./exports     # 导出文件目录
-  file-prefix: merkle_data  # CSV文件名前缀
+  batch-size: 1000          # Batch processing size
+  output-dir: ./exports     # Export files directory
+  file-prefix: merkle_data  # CSV file name prefix
 ```
 
-## 使用方法
+## Usage
 
-### 1. 编译项目
+### 1. Compile Project
 
 ```bash
 mvn clean package
 ```
 
-### 2. 运行导出
+### 2. Run Export
 
-#### 导出所有数据
+#### Export All Data
 ```bash
 java -jar target/mxc-merkle-hacken-data-1.0.0.jar
 ```
 
-#### 导出指定快照日期的数据
+#### Export Data for Specific Snapshot Date
 ```bash
-# 指定日期（时间默认为00:00:00）
+# Specify date (time defaults to 00:00:00)
 java -jar target/mxc-merkle-hacken-data-1.0.0.jar --snapshot-date 2024-11-16
 
-# 指定完整的日期时间
+# Specify complete date and time
 java -jar target/mxc-merkle-hacken-data-1.0.0.jar --spring.config.name=application-export --snapshot-date "2024-11-16 10:30:00"
 ```
 
-### 3. 查看结果
+### 3. View Results
 
-程序执行完成后会输出：
-- 导出文件路径
-- 总记录数
-- 文件大小
-- 文件MD5值
+After program execution, it will output:
+- Export file path
+- Total record count
+- File size
+- File MD5 hash
 
-## CSV输出格式
+## CSV Output Format
 
-导出的CSV文件包含以下5列：
+The exported CSV file contains the following 5 columns:
 
-| 列名 | 说明 | 数据来源 |
-|------|------|----------|
-| memberId | 用户ID | 直接取自member_id字段 |
-| USDT | USDT总金额 | 从balance_data中聚合所有USDT:*的值 |
-| USDC | USDC总金额 | 从balance_data中聚合所有USDC:*的值 |
-| BTC | BTC总金额 | 从balance_data中聚合所有BTC:*的值 |
-| ETH | ETH总金额 | 从balance_data中聚合所有ETH:*的值 |
+| Column Name | Description | Data Source |
+|-------------|-------------|-------------|
+| memberId | User ID | Directly from member_id field |
+| USDT | Total USDT amount | Aggregated from all USDT:* values in balance_data |
+| USDC | Total USDC amount | Aggregated from all USDC:* values in balance_data |
+| BTC | Total BTC amount | Aggregated from all BTC:* values in balance_data |
+| ETH | Total ETH amount | Aggregated from all ETH:* values in balance_data |
 
-### balance_data解析示例
+### balance_data Parsing Example
 
 ```json
 {
@@ -137,66 +137,66 @@ java -jar target/mxc-merkle-hacken-data-1.0.0.jar --spring.config.name=applicati
 }
 ```
 
-解析后聚合结果：
+Aggregated results after parsing:
 - USDT: 300.75 (100.50 + 200.25)
 - USDC: 300.75
 - BTC: 0.001
 - ETH: 0.5
 
-## 性能特性
+## Performance Features
 
-- **内存安全**: 采用分批查询+流式写入，避免大数据量导致的OOM
-- **高效处理**: 默认每批处理1000条记录，可根据服务器配置调整
-- **查询优化**: 
-  - 全量导出使用传统分页查询（LIMIT OFFSET）
-  - 快照日期导出使用基于ID范围的查询，避免大偏移量慢查询问题
-- **进度监控**: 实时显示处理进度和剩余数量
-- **错误处理**: 完善的异常处理机制，单条数据解析失败不影响整体导出
+- **Memory Safe**: Uses batch querying + stream writing to avoid OOM with large datasets
+- **Efficient Processing**: Default batch size of 1000 records, adjustable based on server configuration
+- **Query Optimization**:
+    - Full export uses traditional pagination (LIMIT OFFSET)
+    - Snapshot date export uses ID range-based queries to avoid slow queries with large offsets
+- **Progress Monitoring**: Real-time display of processing progress and remaining count
+- **Error Handling**: Comprehensive exception handling mechanism, single record parsing failure doesn't affect overall export
 
-## 日志输出示例
+## Log Output Example
 
 ```
 2024-11-16 22:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - === MXC Merkle Data Export Tool ===
-2024-11-16 22:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - 开始执行数据导出任务...
-2024-11-16 22:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - 开始导出Merkle数据...
-2024-11-16 22:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - 总记录数: 15272384
-2024-11-16 22:20:02 [main] INFO  c.m.m.s.i.ExportServiceImpl - 已处理 1000 / 15272384 条记录
-2024-11-16 22:20:03 [main] INFO  c.m.m.s.i.ExportServiceImpl - 已处理 2000 / 15272384 条记录
+2024-11-16 22:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - Starting data export task...
+2024-11-16 22:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Starting Merkle data export...
+2024-11-16 22:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total records: 15272384
+2024-11-16 22:20:02 [main] INFO  c.m.m.s.i.ExportServiceImpl - Processed 1000 / 15272384 records
+2024-11-16 22:20:03 [main] INFO  c.m.m.s.i.ExportServiceImpl - Processed 2000 / 15272384 records
 ...
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - 导出完成！
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - 文件路径: ./exports/merkle_data_20241116_222000.csv
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - 总记录数: 15272384
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - 文件大小: 1234567890 bytes
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - 文件MD5: a1b2c3d4e5f67890abcdef1234567890
+2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Export completed!
+2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - File path: ./exports/merkle_data_20241116_222000.csv
+2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total records: 15272384
+2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - File size: 1234567890 bytes
+2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - File MD5: a1b2c3d4e5f67890abcdef1234567890
 ```
 
-## 注意事项
+## Important Notes
 
-1**磁盘空间**: 确保有足够的磁盘空间存储导出文件
-2**内存配置**: 对于超大数据量，可适当调整JVM内存参数
-3**网络稳定**: 确保数据库连接稳定，避免长时间导出过程中断线
+1. **Disk Space**: Ensure sufficient disk space to store export files
+2. **Memory Configuration**: For very large datasets, adjust JVM memory parameters appropriately
+3. **Network Stability**: Ensure stable database connection to avoid disconnection during long export processes
 
-## 故障排除
+## Troubleshooting
 
-### 常见问题
+### Common Issues
 
-1. **数据库连接失败**
-   - 检查数据库连接配置
-   - 确认数据库服务是否正常运行
-   - 验证用户名密码是否正确
+1. **Database Connection Failure**
+    - Check database connection configuration
+    - Confirm database service is running normally
+    - Verify username and password are correct
 
-2. **内存不足**
-   - 减小batch-size配置
-   - 增加JVM内存参数：`java -Xmx2g -jar xxx.jar`
+2. **Out of Memory**
+    - Reduce batch-size configuration
+    - Increase JVM memory parameters: `java -Xmx2g -jar xxx.jar`
 
-3. **文件写入失败**
-   - 检查导出目录是否有写入权限
-   - 确认磁盘空间是否充足
+3. **File Write Failure**
+    - Check if export directory has write permissions
+    - Confirm sufficient disk space
 
-## 开发者信息
+## Developer Information
 
-- 开发语言: Java 8
-- 框架: Spring Boot + MyBatis
-- 构建工具: Maven
-- 数据库: MySQL
-- 导出格式: CSV (使用EasyExcel)
+- Development Language: Java 8
+- Framework: Spring Boot + MyBatis
+- Build Tool: Maven
+- Database: MySQL
+- Export Format: CSV (using EasyExcel)
