@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-这是一个用于导出MXC Merkle Tree叶子节点数据到CSV文件的命令行工具。该工具能够从数据库中读取`fin_merkle_tree_leaf_data`表的数据，解析JSON格式的资产信息，并按币种聚合后导出为CSV格式。
+这是一个用于导出MXC Merkle Tree叶子节点数据到CSV文件的命令行工具。并按币种聚合后导出为CSV格式。
 
 ## 技术栈
 
