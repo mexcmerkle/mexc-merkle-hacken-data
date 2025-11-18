@@ -14,36 +14,11 @@ import java.util.List;
 public interface FinMerkleTreeLeafDataMapper {
     
     /**
-     * Query total record count
-     * @return Total record count
-     */
-    Long countAll();
-    
-    /**
      * Query total record count by snapshot date
      * @param snapshotDate Snapshot date
      * @return Total record count
      */
     Long countBySnapshotDate(@Param("snapshotDate") LocalDateTime snapshotDate);
-    
-    /**
-     * Query data with pagination
-     * @param offset Offset
-     * @param limit Limit count
-     * @return Data list
-     */
-    List<FinMerkleTreeLeafData> selectByPage(@Param("offset") Long offset, @Param("limit") Integer limit);
-    
-    /**
-     * Query data by snapshot date with pagination
-     * @param snapshotDate Snapshot date
-     * @param offset Offset
-     * @param limit Limit count
-     * @return Data list
-     */
-    List<FinMerkleTreeLeafData> selectBySnapshotDateAndPage(@Param("snapshotDate") LocalDateTime snapshotDate, 
-                                                            @Param("offset") Long offset, 
-                                                            @Param("limit") Integer limit);
     
     /**
      * Find minimum ID by snapshot date

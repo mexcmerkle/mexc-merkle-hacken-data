@@ -23,34 +23,10 @@
         balance_data, snapshot_date, create_time, update_time, extends_info
     </sql>
 
-    <!-- Query total record count -->
-    <select id="countAll" resultType="java.lang.Long">
-        SELECT COUNT(1) FROM fin_merkle_tree_leaf_data
-    </select>
-
     <!-- Query total record count by snapshot date -->
     <select id="countBySnapshotDate" resultType="java.lang.Long">
         SELECT COUNT(1) FROM fin_merkle_tree_leaf_data
         WHERE snapshot_date = #{snapshotDate}
-    </select>
-
-    <!-- Query data with pagination -->
-    <select id="selectByPage" resultMap="BaseResultMap">
-        SELECT 
-        <include refid="Base_Column_List"/>
-        FROM fin_merkle_tree_leaf_data
-        ORDER BY id ASC
-        LIMIT #{offset}, #{limit}
-    </select>
-
-    <!-- Query data by snapshot date with pagination -->
-    <select id="selectBySnapshotDateAndPage" resultMap="BaseResultMap">
-        SELECT 
-        <include refid="Base_Column_List"/>
-        FROM fin_merkle_tree_leaf_data
-        WHERE snapshot_date = #{snapshotDate}
-        ORDER BY id ASC
-        LIMIT #{offset}, #{limit}
     </select>
 
     <!-- Find minimum ID by snapshot date -->
