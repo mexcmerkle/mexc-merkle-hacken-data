@@ -1,6 +1,8 @@
 package com.mexc.merkle.data.util;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.mexc.merkle.data.entity.ExportData;
 import com.mexc.merkle.data.entity.FilePartInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +19,8 @@ import java.util.List;
 public class FilePartManager {
     private int currentPartNumber = 1;
     private long currentFileRowCount = 0;
-    private com.alibaba.excel.ExcelWriter currentWriter;
-    private com.alibaba.excel.write.metadata.WriteSheet currentSheet;
+    private ExcelWriter currentWriter;
+    private WriteSheet currentSheet;
     private final List<FilePartInfo> partFiles = new ArrayList<>();
     private final String baseFileName;
     private final String snapshotStr;
