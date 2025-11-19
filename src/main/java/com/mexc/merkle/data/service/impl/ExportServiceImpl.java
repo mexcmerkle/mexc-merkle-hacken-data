@@ -187,7 +187,7 @@ public class ExportServiceImpl implements ExportService {
                         dataList.get(0).getId(), lastId);
             }
         }
-        
+        partManager.closeAll();
         // Print summary
         partManager.printSummary(processedCount, totalUsdt, totalUsdc, totalBtc, totalEth);
         
