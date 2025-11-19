@@ -1,12 +1,12 @@
 package com.mexc.merkle.data.service.impl;
 
-import com.alibaba.excel.EasyExcel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mexc.merkle.data.entity.ExportData;
 import com.mexc.merkle.data.entity.FinMerkleTreeLeafData;
 import com.mexc.merkle.data.mapper.FinMerkleTreeLeafDataMapper;
 import com.mexc.merkle.data.service.ExportService;
+import com.mexc.merkle.data.util.FilePartManager;
 import com.mexc.merkle.data.util.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +44,9 @@ public class ExportServiceImpl implements ExportService {
     @Value("${export.file-prefix:mexc_merkle_data}")
     private String filePrefix;
     
+    @Value("${export.max-rows-per-file:2000000}")
+    private Long maxRowsPerFile;
+    
     private static final String[] CURRENCY_PREFIXES = {"USDT:", "USDC:", "BTC:", "ETH:"};
 
     @Override
@@ -64,14 +67,11 @@ public class ExportServiceImpl implements ExportService {
             exportDir.mkdirs();
         }
         
-        // Generate file name
+        // Generate base file name
         String snapshotStr = snapshotDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String fileName = filePrefix + "_" +snapshotStr + ".csv";
-        String filePath = outputDir + File.separator + fileName;
         
         // Query total record count
-        Long totalCount;
-        totalCount = merkleDataMapper.countBySnapshotDate(snapshotDate);
+        Long totalCount = merkleDataMapper.countBySnapshotDate(snapshotDate);
         log.info("Total records for snapshot date {}: {}", snapshotDate, totalCount);
 
         if (totalCount == 0) {
@@ -79,40 +79,32 @@ public class ExportServiceImpl implements ExportService {
             return;
         }
         
-        // Batch export
-        long processedCount = 0;
+        // Initialize file part manager
+        FilePartManager partManager = new FilePartManager(filePrefix, snapshotStr, outputDir, maxRowsPerFile);
         
-        // Create EasyExcel writer
-        try (com.alibaba.excel.ExcelWriter excelWriter = EasyExcel.write(filePath, ExportData.class).build()) {
-            com.alibaba.excel.write.metadata.WriteSheet writeSheet = EasyExcel.writerSheet("MerkleData").build();
-
-            processedCount = exportByIdRange(snapshotDate, excelWriter, writeSheet, totalCount);
-
+        try {
+            // Start export process
+            long processedCount = exportByIdRange(snapshotDate, partManager, totalCount);
+            
+            // Print final summary
+            log.info("Export completed successfully!");
+            
+        } finally {
+            // Ensure all files are properly closed
+            partManager.closeAll();
         }
-        
-        // Calculate file MD5
-        File exportFile = new File(filePath);
-        String md5 = MD5Util.calculateFileMD5(exportFile);
-        
-        log.info("Export completed!");
-        log.info("File path: {}", filePath);
-        log.info("Total records: {}", processedCount);
-        log.info("File size: {} bytes", exportFile.length());
-        log.info("File MD5: {}", md5);
     }
     
     /**
-     * ID range-based export (optimize snapshot date query performance)
+     * ID range-based export with file splitting (optimize snapshot date query performance)
      * @param snapshotDate Snapshot date
-     * @param excelWriter Excel writer
-     * @param writeSheet Write sheet
+     * @param partManager File part manager
      * @param totalCount Total record count
      * @return Processed record count
      */
     private long exportByIdRange(LocalDateTime snapshotDate, 
-                                com.alibaba.excel.ExcelWriter excelWriter,
-                                com.alibaba.excel.write.metadata.WriteSheet writeSheet,
-                                Long totalCount) {
+                                FilePartManager partManager,
+                                Long totalCount) throws Exception {
         
         // Query ID range
         Long minId = merkleDataMapper.findMinIdBySnapshotDate(snapshotDate);
@@ -124,6 +116,10 @@ public class ExportServiceImpl implements ExportService {
         }
         
         log.info("ID range for snapshot date {}: {} - {}", snapshotDate, minId, maxId);
+        log.info("Max rows per file: {}", maxRowsPerFile);
+        
+        // Initialize first file
+        partManager.initializeFirstFile();
         
         // Initialize total amounts for all users
         BigDecimal totalUsdt = BigDecimal.ZERO;
@@ -171,32 +167,29 @@ public class ExportServiceImpl implements ExportService {
                 }
             }
             
-            // Write data
-            if (!exportDataList.isEmpty()) {
-                excelWriter.write(exportDataList, writeSheet);
+            // Check if we need to create a new file
+            if (partManager.needNewFile(exportDataList.size())) {
+                partManager.switchToNewFile();
             }
+            
+            // Write data to current file
+            partManager.writeData(exportDataList);
             
             processedCount += dataList.size();
             
             // Update next batch start ID
             Long lastId = dataList.get(dataList.size() - 1).getId();
             currentMinId = lastId + 1;
+            
             if (processedCount % 100000 == 0) {
                 log.info("Processed {} / {} records (ID range: {} - {})",
                         processedCount, totalCount,
                         dataList.get(0).getId(), lastId);
             }
         }
-        
-        // Print total amounts for all users
-        log.info("=== TOTAL AMOUNTS FOR ALL USERS ===");
-        log.info("Snapshot Date: {}", snapshotDate);
-        log.info("Total Records Processed: {}", processedCount);
-        log.info("USDT: {}", totalUsdt);
-        log.info("USDC: {}", totalUsdc);
-        log.info("BTC: {}", totalBtc);
-        log.info("ETH: {}", totalEth);
-        log.info("===================================");
+        partManager.closeAll();
+        // Print summary
+        partManager.printSummary(processedCount, totalUsdt, totalUsdc, totalBtc, totalEth);
         
         return processedCount;
     }

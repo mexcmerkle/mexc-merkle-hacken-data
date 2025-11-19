@@ -41,3 +41,5 @@ export:
   output-dir: ./exports
   # CSV file name prefix
   file-prefix: mexc_merkle_data
+  # Maximum rows per file (2 million)
+  max-rows-per-file: 2000000

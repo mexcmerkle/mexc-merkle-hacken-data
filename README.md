@@ -19,11 +19,13 @@ This is a command-line tool for exporting MEXC Merkle Tree leaf node data to CSV
 - ✅ Batch processing to prevent Out of Memory (OOM) issues
 - ✅ Aggregate amounts by cryptocurrency prefixes (USDT, USDC, BTC, ETH)
 - ✅ Stream writing CSV files using EasyExcel
-- ✅ Automatically calculate MD5 hash of exported files
-- ✅ Detailed logging and progress display
+- ✅ **File Splitting**: Automatically split large exports into multiple files (2 million rows per file)
+- ✅ Automatically calculate MD5 hash for each exported file
+- ✅ Detailed logging and progress display with file splitting summary
 - ✅ Command-line execution with one-click operation
 - ✅ Support filtering export data by snapshot date
 - ✅ Flexible date format support (yyyy-MM-dd or yyyy-MM-dd HH:mm:ss)
+- ✅ **Data Integrity**: Ensures no data duplication or loss across split files
 
 ## Project Structure
 
@@ -75,10 +77,20 @@ You can adjust export parameters in `application.yml`:
 
 ```yaml
 export:
-  batch-size: 1000          # Batch processing size
-  output-dir: ./exports     # Export files directory
-  file-prefix: merkle_data  # CSV file name prefix
+  batch-size: 1000              # Batch processing size
+  output-dir: ./exports         # Export files directory
+  file-prefix: mexc_merkle_data # CSV file name prefix
+  max-rows-per-file: 2000000    # Maximum rows per file (2 million)
 ```
+
+### File Splitting Configuration
+
+The tool automatically splits large exports into multiple files to manage file sizes:
+
+- **Default Split Size**: 2,000,000 rows per file
+- **File Naming**: `mexc_merkle_data_20241119_part001.csv`, `mexc_merkle_data_20241119_part002.csv`, etc.
+- **Data Integrity**: Each record appears in exactly one file, no duplication or loss
+- **Individual MD5**: Each split file has its own MD5 hash for verification
 
 ## Usage
 
@@ -142,19 +154,52 @@ Aggregated results after parsing:
 
 ## Log Output Example
 
+### Single File Export (< 2M rows)
 ```
-2024-11-16 22:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - === ME Merkle Data Export Tool ===
-2024-11-16 22:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - Starting data export task...
-2024-11-16 22:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Starting Merkle data export...
-2024-11-16 22:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total records: 15272384
-2024-11-16 22:20:02 [main] INFO  c.m.m.s.i.ExportServiceImpl - Processed 1000 / 15272384 records
-2024-11-16 22:20:03 [main] INFO  c.m.m.s.i.ExportServiceImpl - Processed 2000 / 15272384 records
+2024-11-19 11:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - === MEXC Merkle Data Export Tool ===
+2024-11-19 11:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - Starting data export task...
+2024-11-19 11:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Starting to export Merkle data for snapshot date: 2024-11-19T00:00
+2024-11-19 11:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total records for snapshot date 2024-11-19T00:00: 1500000
+2024-11-19 11:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Max rows per file: 2000000
+2024-11-19 11:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Created new file part 1: mexc_merkle_data_20241119_part001.csv
+2024-11-19 11:20:02 [main] INFO  c.m.m.s.i.ExportServiceImpl - Processed 100000 / 1500000 records
 ...
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Export completed!
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - File path: ./exports/merkle_data_20241116_222000.csv
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total records: 15272384
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - File size: 1234567890 bytes
-2024-11-16 22:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - File MD5: a1b2c3d4e5f67890abcdef1234567890
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Completed file part 1: 1500000 rows, 184320000 bytes, MD5: a1b2c3d4e5f67890abcdef1234567890
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - === EXPORT SUMMARY ===
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Snapshot Date: 20241119
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total Records: 1500000
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total Files: 1
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Files Generated:
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl -   - mexc_merkle_data_20241119_part001.csv (1500000 rows, 184320000 bytes, MD5: a1b2c3d4e5f67890abcdef1234567890)
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total Size: 184320000 bytes (175 MB)
+```
+
+### Multiple File Export (> 2M rows)
+```
+2024-11-19 11:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - === MEXC Merkle Data Export Tool ===
+2024-11-19 11:20:00 [main] INFO  c.m.m.r.ExportCommandLineRunner - Starting data export task...
+2024-11-19 11:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Starting to export Merkle data for snapshot date: 2024-11-19T00:00
+2024-11-19 11:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total records for snapshot date 2024-11-19T00:00: 5500000
+2024-11-19 11:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Max rows per file: 2000000
+2024-11-19 11:20:01 [main] INFO  c.m.m.s.i.ExportServiceImpl - Created new file part 1: mexc_merkle_data_20241119_part001.csv
+2024-11-19 11:20:02 [main] INFO  c.m.m.s.i.ExportServiceImpl - Processed 100000 / 5500000 records
+...
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Completed file part 1: 2000000 rows, 245760000 bytes, MD5: a1b2c3d4e5f67890abcdef1234567890
+2024-11-19 11:25:30 [main] INFO  c.m.m.s.i.ExportServiceImpl - Created new file part 2: mexc_merkle_data_20241119_part002.csv
+...
+2024-11-19 11:30:45 [main] INFO  c.m.m.s.i.ExportServiceImpl - Completed file part 2: 2000000 rows, 245760000 bytes, MD5: def456789abcdef0123456789abcdef0
+2024-11-19 11:30:45 [main] INFO  c.m.m.s.i.ExportServiceImpl - Created new file part 3: mexc_merkle_data_20241119_part003.csv
+...
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl - Completed file part 3: 1500000 rows, 184320000 bytes, MD5: ghi789abcdef0123456789abcdef01234
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl - === EXPORT SUMMARY ===
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl - Snapshot Date: 20241119
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total Records: 5500000
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total Files: 3
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl - Files Generated:
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl -   - mexc_merkle_data_20241119_part001.csv (2000000 rows, 245760000 bytes, MD5: a1b2c3d4e5f67890abcdef1234567890)
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl -   - mexc_merkle_data_20241119_part002.csv (2000000 rows, 245760000 bytes, MD5: def456789abcdef0123456789abcdef0)
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl -   - mexc_merkle_data_20241119_part003.csv (1500000 rows, 184320000 bytes, MD5: ghi789abcdef0123456789abcdef01234)
+2024-11-19 11:35:20 [main] INFO  c.m.m.s.i.ExportServiceImpl - Total Size: 675840000 bytes (644 MB)
 ```
 
 ## Important Notes
