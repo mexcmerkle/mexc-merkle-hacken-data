@@ -3,9 +3,9 @@ spring:
     name: mexc-merkle-hacken-data
   
   datasource:
-    url: mysql://localhost:3306/your_database_name?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: your_database_username
-    password: your_database_password
+    url: config(mxc.merkle.data.jdbcurl)
+    username: config(mxc.merkle.data.username)
+    password: config(mxc.merkle.data.password)
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
@@ -13,6 +13,8 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+aws:
+  region: ${AWS_REGION:ap-northeast-1}
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
