@@ -3,9 +3,9 @@ spring:
     name: mexc-merkle-hacken-data
   
   datasource:
-    url: config(mxc.merkle.data.jdbcurl)
-    username: config(mxc.merkle.data.username)
-    password: config(mxc.merkle.data.password)
+    url: config(mexc.merkle.data.jdbcurl)
+    username: config(mexc.merkle.data.username)
+    password: config(mexc.merkle.data.password)
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10

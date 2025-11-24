@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Slf4j
 public class AwsSecretManager {
-    String secretName = "mxc.merkle";
+    String secretName = "mexc.merkle";
     Region region = null;
     // Create a Secrets Manager client
     SecretsManagerClient client = SecretsManagerClient.builder()
