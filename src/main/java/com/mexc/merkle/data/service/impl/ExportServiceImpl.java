@@ -259,7 +259,7 @@ public class ExportServiceImpl implements ExportService {
             return result != null ? result : new HashMap<>();
         } catch (Exception e) {
             log.error("Failed to parse balance_data: {}", balanceDataJson, e);
-            return new HashMap<>();
+            throw new RuntimeException(e);
         }
     }
 }
