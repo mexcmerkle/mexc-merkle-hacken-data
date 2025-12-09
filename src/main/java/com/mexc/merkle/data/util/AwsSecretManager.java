@@ -35,20 +35,11 @@ public class AwsSecretManager {
             GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
                     .secretId(secretName)
                     .build();
-            log.info("region={}", regionName);
             getSecretValueResponse = client.getSecretValue(getSecretValueRequest);
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> readValue = objectMapper.readValue(getSecretValueResponse.secretString(), new TypeReference<Map<String, String>>() {
             });
             if (MapUtils.isNotEmpty(readValue)) {
-                log.info("readAllKey={}", readValue.keySet());
-                log.info("readAllValue={}", readValue.values().stream().map(s -> {
-                    try {
-                        return MD5Util.calculateValueMD5(s);
-                    } catch (NoSuchAlgorithmException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).collect(Collectors.toList()));
                 map.putAll(readValue);
             } else {
                 log.error("getSecretValueResponse,value failed value:{}", getSecretValueResponse.secretString());
@@ -67,8 +58,7 @@ public class AwsSecretManager {
             return null;
         }
         if (key.matches("config\\(([^)]+)\\)")) {
-            String value = key.replaceAll("config\\(([^)]+)\\)", "$1");
-            return value;
+            return key.replaceAll("config\\(([^)]+)\\)", "$1");
         }
         return null;
     }
