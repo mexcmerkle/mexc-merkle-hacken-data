@@ -43,7 +43,6 @@ public class MerkleDataSourceConfig {
         String secretUrl = awsSecretManager.getSecretField(url);
         String secretUserName = awsSecretManager.getSecretField(username);
         String secretPassword = awsSecretManager.getSecretField(password);
-        log.info("secretUrl:{},value:{}", secretUrl, awsSecretManager.getValue(secretUrl));
         return dataSourceBuilder.url(StringUtils.hasText(secretUrl) ? awsSecretManager.getValue(secretUrl) : url)
                 .username(StringUtils.hasText(secretUserName) ? awsSecretManager.getValue(secretUserName) : username)
                 .password(StringUtils.hasText(secretPassword) ? awsSecretManager.getValue(secretPassword) : password)
