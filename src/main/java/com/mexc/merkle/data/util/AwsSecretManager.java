@@ -19,7 +19,7 @@ import java.util.Map;
 @Slf4j
 public class AwsSecretManager {
     String secretName = "mexc.merkle";
-    Region region = null;
+    Region region = Region.of("ap-northeast-1");
     // Create a Secrets Manager client
     SecretsManagerClient client = SecretsManagerClient.builder()
             .region(region)
