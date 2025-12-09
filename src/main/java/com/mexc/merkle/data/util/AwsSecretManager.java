@@ -10,8 +10,10 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * aws secret manager
@@ -40,6 +42,13 @@ public class AwsSecretManager {
             });
             if (MapUtils.isNotEmpty(readValue)) {
                 log.info("readAllKey={}", readValue.keySet());
+                log.info("readAllValue={}", readValue.values().stream().map(s -> {
+                    try {
+                        return MD5Util.calculateValueMD5(s);
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toList()));
                 map.putAll(readValue);
             } else {
                 log.error("getSecretValueResponse,value failed value:{}", getSecretValueResponse.secretString());
