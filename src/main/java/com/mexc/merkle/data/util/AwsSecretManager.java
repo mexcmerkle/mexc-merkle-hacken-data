@@ -33,6 +33,7 @@ public class AwsSecretManager {
             GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
                     .secretId(secretName)
                     .build();
+            log.info("region={}", regionName);
             getSecretValueResponse = client.getSecretValue(getSecretValueRequest);
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> readValue = objectMapper.readValue(getSecretValueResponse.secretString(), new TypeReference<Map<String, String>>() {
