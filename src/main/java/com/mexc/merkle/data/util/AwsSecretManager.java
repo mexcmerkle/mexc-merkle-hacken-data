@@ -39,6 +39,7 @@ public class AwsSecretManager {
             Map<String, String> readValue = objectMapper.readValue(getSecretValueResponse.secretString(), new TypeReference<Map<String, String>>() {
             });
             if (MapUtils.isNotEmpty(readValue)) {
+                log.info("readAllKey={}", readValue.keySet());
                 map.putAll(readValue);
             } else {
                 log.error("getSecretValueResponse,value failed value:{}", getSecretValueResponse.secretString());
