@@ -68,7 +68,7 @@ public class AwsSecretManager {
         }
         if (key.matches("config\\(([^)]+)\\)")) {
             String value = key.replaceAll("config\\(([^)]+)\\)", "$1");
-            return value.replace(secretName, "").replaceFirst(".", "");
+            return value;
         }
         return null;
     }
