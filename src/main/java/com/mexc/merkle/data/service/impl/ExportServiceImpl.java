@@ -68,10 +68,10 @@ public class ExportServiceImpl implements ExportService {
         }
         
         // Generate base file name
-        String snapshotNumber = snapshotDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String snapshotDateStr = snapshotDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         // Query total record count
-        Long totalCount = merkleDataMapper.countBySnapshotDate(snapshotDate, snapshotNumber);
+        Long totalCount = merkleDataMapper.countBySnapshotDate(snapshotDate, snapshotDateStr);
         log.info("Total records for snapshot date {}: {}", snapshotDate, totalCount);
 
         if (totalCount == 0) {
@@ -80,11 +80,11 @@ public class ExportServiceImpl implements ExportService {
         }
         
         // Initialize file part manager
-        FilePartManager partManager = new FilePartManager(filePrefix, snapshotNumber, outputDir, maxRowsPerFile);
+        FilePartManager partManager = new FilePartManager(filePrefix, snapshotDateStr, outputDir, maxRowsPerFile);
         
         try {
             // Start export process
-            long processedCount = exportByIdRange(snapshotDate, partManager, totalCount, snapshotNumber);
+            long processedCount = exportByIdRange(snapshotDate, partManager, totalCount, snapshotDateStr);
             
             // Print final summary
             log.info("Export completed successfully!");
@@ -101,16 +101,16 @@ public class ExportServiceImpl implements ExportService {
      * @param snapshotDate Snapshot date
      * @param partManager  File part manager
      * @param totalCount   Total record count
-     * @param snapshotNumber
+     * @param snapshotDateStr
      * @return Processed record count
      */
     private long exportByIdRange(LocalDateTime snapshotDate,
                                  FilePartManager partManager,
-                                 Long totalCount, String snapshotNumber) throws Exception {
+                                 Long totalCount, String snapshotDateStr) throws Exception {
         
         // Query ID range
-        Long minId = merkleDataMapper.findMinIdBySnapshotDate(snapshotDate, snapshotNumber);
-        Long maxId = merkleDataMapper.findMaxIdBySnapshotDate(snapshotDate, snapshotNumber);
+        Long minId = merkleDataMapper.findMinIdBySnapshotDate(snapshotDate, snapshotDateStr);
+        Long maxId = merkleDataMapper.findMaxIdBySnapshotDate(snapshotDate, snapshotDateStr);
         
         if (minId == null || maxId == null) {
             log.warn("Unable to get ID range for snapshot date: {}", snapshotDate);
@@ -138,7 +138,7 @@ public class ExportServiceImpl implements ExportService {
             
             // Query data based on ID range
             List<FinMerkleTreeLeafData> dataList = merkleDataMapper.selectBySnapshotDateAndIdRange(
-                    snapshotDate, currentMinId, currentMaxId, batchSize, snapshotNumber);
+                    snapshotDate, currentMinId, currentMaxId, batchSize, snapshotDateStr);
             
             if (dataList.isEmpty()) {
                 // If current range has no data, skip to next batch
