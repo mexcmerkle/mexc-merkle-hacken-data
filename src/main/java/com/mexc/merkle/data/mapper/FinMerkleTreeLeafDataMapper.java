@@ -19,7 +19,7 @@ public interface FinMerkleTreeLeafDataMapper {
      * @param snapshotDate Snapshot date
      * @return Total record count
      */
-    Long countBySnapshotDate(@Param("snapshotDate") LocalDateTime snapshotDate, @Param("snapshotNumber") String snapshotNumber);
+    Long countBySnapshotDate(@Param("snapshotDate") LocalDateTime snapshotDate, @Param("snapshotDateStr") String snapshotDateStr);
 
     /**
      * Find minimum ID by snapshot date
@@ -27,7 +27,7 @@ public interface FinMerkleTreeLeafDataMapper {
      * @param snapshotDate Snapshot date
      * @return Minimum ID
      */
-    Long findMinIdBySnapshotDate(@Param("snapshotDate") LocalDateTime snapshotDate, @Param("snapshotNumber") String snapshotNumber);
+    Long findMinIdBySnapshotDate(@Param("snapshotDate") LocalDateTime snapshotDate, @Param("snapshotDateStr") String snapshotDateStr);
 
     /**
      * Find maximum ID by snapshot date
@@ -35,7 +35,7 @@ public interface FinMerkleTreeLeafDataMapper {
      * @param snapshotDate Snapshot date
      * @return Maximum ID
      */
-    Long findMaxIdBySnapshotDate(@Param("snapshotDate") LocalDateTime snapshotDate, @Param("snapshotNumber") String snapshotNumber);
+    Long findMaxIdBySnapshotDate(@Param("snapshotDate") LocalDateTime snapshotDate, @Param("snapshotDateStr") String snapshotDateStr);
 
     /**
      * Query data by snapshot date and ID range
@@ -50,5 +50,5 @@ public interface FinMerkleTreeLeafDataMapper {
                                                                @Param("minId") Long minId,
                                                                @Param("maxId") Long maxId,
                                                                @Param("limit") Integer limit,
-                                                               @Param("snapshotNumber") String snapshotNumber);
+                                                               @Param("snapshotDateStr") String snapshotDateStr);
 }
