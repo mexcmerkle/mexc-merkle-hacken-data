@@ -49,6 +49,7 @@
         WHERE snapshot_date = #{snapshotDate}
         AND id &gt;= #{minId}
         AND id &lt;= #{maxId}
+        order by id asc
         LIMIT #{limit}
     </select>
 
